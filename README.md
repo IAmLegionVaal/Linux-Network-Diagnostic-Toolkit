@@ -1,39 +1,57 @@
 # Linux Network Diagnostic Toolkit
 
-A read-only Bash toolkit for collecting Linux network configuration, connectivity, DNS, routing, socket, and firewall evidence.
+A Linux support toolkit for collecting network evidence and repairing selected interface, DHCP, resolver and network-service problems.
 
-## Features
-
-- Interface, address, link, route, and neighbour-table inventory
-- DNS resolver configuration and name-resolution tests
-- Default-gateway, internet, and HTTPS reachability tests
-- Packet-loss and latency measurements
-- Listening and established socket evidence
-- NetworkManager or systemd-networkd status
-- Firewall context from UFW, firewalld, or nftables
-- MTU and route-to-target analysis
-- Text and JSON summary reports
-
-## Usage
+## Diagnostic script
 
 ```bash
 chmod +x src/linux_network_diagnostic.sh
-sudo ./src/linux_network_diagnostic.sh
+sudo ./src/linux_network_diagnostic.sh --target example.com
 ```
 
-Target a specific host:
+The diagnostic script reports interfaces, routes, neighbour tables, DNS, connectivity, sockets, network managers, firewall context and MTU evidence.
+
+## Repair script
+
+Preview standard network service repair:
 
 ```bash
-sudo ./src/linux_network_diagnostic.sh --target example.com --output /tmp/network-test
+chmod +x src/linux_network_repair.sh
+sudo ./src/linux_network_repair.sh --repair --dry-run
 ```
 
-## Safety
+Restart the detected network manager:
 
-The script does not reset adapters, renew addresses, flush DNS, change routes, or modify firewall rules.
+```bash
+sudo ./src/linux_network_repair.sh --repair
+```
 
-## Validation
+Flush resolver caches:
 
-Test with working connectivity, failed DNS, unreachable gateway, disconnected interface, and a VPN-enabled lab host.
+```bash
+sudo ./src/linux_network_repair.sh --flush-dns
+```
+
+Renew DHCP or cycle one interface:
+
+```bash
+sudo ./src/linux_network_repair.sh --interface eth0 --renew-dhcp
+sudo ./src/linux_network_repair.sh --interface eth0 --cycle-interface
+```
+
+## What the repair does
+
+- Detects NetworkManager, systemd-networkd or the traditional networking service.
+- Restarts the active network-management service.
+- Flushes resolver caches and restarts supported resolver services.
+- Renews DHCP using the active manager or `dhclient` where available.
+- Cycles or reconfigures one selected interface.
+- Captures before-and-after interface, route, DNS and connectivity state.
+- Supports confirmation prompts, dry-run, logs and clear exit codes.
+
+## Safety and limitations
+
+Network repair can interrupt SSH, VPN and remote-management sessions. The tool does not change firewall rules, create routes or write persistent DNS configuration.
 
 ## Author
 
