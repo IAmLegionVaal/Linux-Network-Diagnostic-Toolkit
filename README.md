@@ -53,6 +53,6 @@ sudo ./src/linux_network_repair.sh --interface eth0 --cycle-interface
 
 Network repair can interrupt SSH, VPN and remote-management sessions. The tool does not change firewall rules, create routes or write persistent DNS configuration.
 
-## Author
+## Maintainer
 
-Dewald Pretorius — L2 IT Support Engineer
+IAmLegionVaal
